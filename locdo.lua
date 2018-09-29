@@ -75,18 +75,22 @@ tbSetDo[3] = {
 -- Loc do theo che do auto va neu co 4 dong vip tro len thi giu lai
 gl_SoDongVip = 4
 
+-- Bat che do debug
+gl_Debug = false
+
+-- Gui do vao ruong
+gl_GuiDo = true
+
 function NhanDo()
     -- talkNPC()
     useLenhBai()
     clickMenuAll(1,2,0,3)
     nhapso(10) 
-    enter()
 end
 
 function main()
-    writeThuocTinh()
-    -- while true do
-    --     LocDo()
-    --     NhanDo()
-    -- end
+    while true do
+        LocDo()
+        NhanDo()
+    end
 end
