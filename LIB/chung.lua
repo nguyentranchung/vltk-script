@@ -23,6 +23,7 @@ gl_TienHanhTrang = 0
 gl_GuiDo = true
 preMenuText = ""
 gl_Debug = true
+tbSetDo = {}
 -- End -----------------------------------------------------
 function useTHP()
     tbVulanLib.UseItemName("ThÇn Hµnh Phï")
