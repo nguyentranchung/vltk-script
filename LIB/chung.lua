@@ -17,10 +17,11 @@ gl_QuangCao = true
 gl_QuangCaoCount = 0
 gl_LocDoTheoSet = 1
 gl_menuClickSpeed = 50
+gl_Sleep = 50
 gl_Tien = false
 gl_TienHanhTrang = 0
+gl_GuiDo = true
 preMenuText = ""
-tbSetDo = {}
 gl_Debug = true
 -- End -----------------------------------------------------
 function useTHP()
@@ -35,14 +36,14 @@ end
 function clickMenu(nIndex)
     if hasMenu(gl_MenuSkip) then
         local nType = getMenuType()
-        while menu.GetText(nType, nIndex) == preMenuText do
-            timer.Sleep(gl_menuClickSpeed)
-        end
+        -- while menu.GetText(nType, nIndex) == preMenuText do
+        --     timer.Sleep(gl_menuClickSpeed)
+        -- end
         if gl_ShowSelectedMenu or gl_Debug then
             echo('§· chän: ' .. menu.GetText(nType, nIndex))
         end
         menu.ClickIndex(nType, nIndex)
-        preMenuText = menu.GetText(nType, nIndex)
+        -- preMenuText = menu.GetText(nType, nIndex)
         timer.Sleep(gl_menuClickSpeed)
         return true
     else
@@ -153,7 +154,7 @@ function checkNPC()
     for i = 0, 255 do
         if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
             local nx, ny = npc.GetMapPos(i)
-            echo(npc.GetName(i) .. ' kind: ' .. npc.GetKind(i) .. " length:" ..string.len(npc.GetName(i)))
+            echo(npc.GetName(i) .. ' kind: ' .. npc.GetKind(i) .. " length: " ..string.len(npc.GetName(i)))
         end
     end
 end
@@ -229,7 +230,7 @@ function talkNPC(szNPCName)
             hasDialogOrMenu(4)
             echo("Nãi chuyÖn thµnh c«ng!")
             echoLine()
-            return
+            return true
         end
         if npc.GetKind(i) == 3 and blank(szNPCName) then
             if getDistance(nx, ny) < minLength then
@@ -240,12 +241,20 @@ function talkNPC(szNPCName)
     end
 
     if blank(szNPCName) then
-        echo ("Kh«ng nhËp vµo tªn npc, nãi chuyÖn víi ng­êi gÇn nhÊt: " .. npc.GetName(indexNPC))
-        player.DialogNpc(indexNPC)
-        hasDialogOrMenu(4)
-        echo("Nãi chuyÖn thµnh c«ng!")
-        echoLine()
-        return
+        if gl_Debug then
+            echo(minLength)
+        end
+        if minLength > 1100 then
+            echo ("Kh«ng nhËp vµo tªn npc, nãi chuyÖn víi ng­êi gÇn nhÊt: " .. npc.GetName(indexNPC))
+            player.DialogNpc(indexNPC)
+            hasDialogOrMenu(4)
+            echo("Nãi chuyÖn thµnh c«ng!")
+            echoLine()
+            return true
+        else
+            echoRed("NPC gÇn nhÊt ®øng c¸ch qu¸ xa")
+            return false
+        end
     end
     echo("Nãi chuyÖn thÊt b¹i!")
     echoLine()
@@ -254,7 +263,7 @@ end
 function hasDialogOrMenu(nSecond)
     gl_FirstTime = os.clock()
     while menu.IsVisible(0) == 0 and menu.IsVisible(1) == 0 and dialog.IsVisible() == 0 do 
-        timer.Sleep(50) 
+        timer.Sleep(gl_Sleep) 
         if (os.clock() - gl_FirstTime) > nSecond then
             return false
         end
@@ -265,18 +274,19 @@ end
 function hasMenu(nSecond)
     gl_FirstTime = os.clock()
     while menu.IsVisible(0) == 0 and menu.IsVisible(1) == 0 do 
-        timer.Sleep(50) 
+        timer.Sleep(gl_Sleep) 
         if (os.clock() - gl_FirstTime) > nSecond then
             return false
         end
     end
+    timer.Sleep(20) 
     return true
 end
 
 function hasDialog(nSecond)
     gl_FirstTime = os.clock()
     while dialog.IsVisible() == 0 do 
-        timer.Sleep(50) 
+        timer.Sleep(gl_Sleep) 
         if (os.clock() - gl_FirstTime) > nSecond then
             return false
         end
@@ -311,7 +321,7 @@ function LocDo()
         end
     end
     local nVip = 0
-    local nIndex, nPlace = item.GetFirst()
+    local nIndex, nPlace, nXLocDo, nYLocDo = item.GetFirst()
     while nIndex ~= 0 do
         local nGenre = item.GetKey(nIndex)
         if nPlace == 3 and nGenre == 0 then
@@ -344,10 +354,11 @@ function LocDo()
             if nDoVip == 0 then
                 ShopItem(nIndex)
             else
+                GuiDo(nIndex, nXLocDo, nYLocDo)
                 nVip = nVip + 1
             end
         end
-        nIndex, nPlace = item.GetNext()
+        nIndex, nPlace, nXLocDo, nYLocDo = item.GetNext()
     end
     if nVip > 0 then
         echo('Trong hµnh trang cã ' .. nVip .. ' ®å vÝp')
@@ -361,6 +372,36 @@ function LocDo()
     end
     echoQuangCao()
     nFreeHanhTrang = getFreeHanhTrang(false)
+end
+
+function GuiDo(nIndex, nXLocDo, nYLocDo)
+    if gl_GuiDo then
+        echoGreen("TiÕn hµnh cÊt ®å!!!")
+        local nWidthGuiDo, nHeightGuiDo = item.GetSize(nIndex)
+        local bFound, nXGuiDo, nYGuiDo = player.FindRoom(nWidthGuiDo, nHeightGuiDo, 1)
+        if bFound then
+            echoRed("B¹n ph¶i ch¾n ch¾n r­¬ng ch­a ®å ®ang ®­îc më s½n!!!")
+            item.Move(3,nXLocDo, nYLocDo,0,0,0)
+            while item.IsHold() == 0 do
+                echo("no hold")
+                timer.Sleep(500)
+            end
+            item.Move(4, nXGuiDo, nYGuiDo, 4, nXGuiDo, nYGuiDo)
+            gl_FirstTime = os.clock()
+            while item.IsHold() == 1 do
+                timer.Sleep(500)
+                if os.clock() - gl_FirstTime > 5 then
+                    echoRed("R­¬ng ®å ch­a më, t¾t tÝnh n¨ng göi ®å!!!")
+                    gl_GuiDo = false
+                    item.Move(3,nXLocDo, nYLocDo, 3,nXLocDo, nYLocDo)
+                    break
+                end
+            end
+        else
+            gl_GuiDo = false
+            echoRed("R­¬ng kh«ng cßn chç trèng!!!")
+        end
+    end
 end
 
 function writeThuocTinh()
@@ -506,7 +547,7 @@ function echoQuangCao()
         -- tbVulanLib.Chat("CH_WORLD", "<enter>Chung NguyÔn<enter>võa update auto läc ®.å version 2.0<enter>Tèc ®é ¸nh s¸ng - kh«ng lag - free")
         gl_QuangCaoCount = 0
     end
-    tbVulanLib.Chat("CH_NEARBY", "<enter>Chung NguyÔn<enter>võa update auto läc ®.å version 2.0<enter>Tèc ®é ¸nh s¸ng - kh«ng lag - free")
+    tbVulanLib.Chat("CH_NEARBY", "<color=green>Auto ChungNguyÔn max speed, free :0")
     gl_QuangCaoCount = gl_QuangCaoCount + 1
 end
 
