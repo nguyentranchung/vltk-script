@@ -11,7 +11,7 @@ gl_FirstTime = gl_Time
 gl_ScriptFolder = system.GetScriptFolder()
 gl_SoDongVip = 4
 gl_MenuSkip = 3
-gl_EnterWait = 200
+gl_EnterWait = 30
 gl_ShowSelectedMenu = false
 gl_QuangCao = true
 gl_QuangCaoCount = 0
@@ -21,6 +21,8 @@ gl_Sleep = 50
 gl_Tien = false
 gl_TienHanhTrang = 0
 gl_GuiDo = true
+gl_InternetDelay = 50
+gl_filterCount = 0
 preMenuText = ""
 gl_Debug = true
 tbSetDo = {}
@@ -36,6 +38,7 @@ end
 
 function clickMenu(nIndex)
     if hasMenu(gl_MenuSkip) then
+		timer.Sleep(gl_menuClickSpeed)
         local nType = getMenuType()
         -- while menu.GetText(nType, nIndex) == preMenuText do
         --     timer.Sleep(gl_menuClickSpeed)
@@ -45,7 +48,6 @@ function clickMenu(nIndex)
         end
         menu.ClickIndex(nType, nIndex)
         -- preMenuText = menu.GetText(nType, nIndex)
-        timer.Sleep(gl_menuClickSpeed)
         return true
     else
         if gl_Debug then
@@ -74,6 +76,9 @@ end
 function resetMenuDialog()
     if dialog.IsVisible() then
         dialog.Close()
+		if dialog.IsVisible() == 1 then
+			system.SendKey(27, 1)
+		end
     end
     if menu.IsVisible(1) then
         menu.Close(1)
@@ -307,6 +312,16 @@ end
 
 
 function LocDo()
+	if gl_InternetDelay == nil then
+		gl_InternetDelay = 150
+	end
+	
+	if gl_InternetDelay > 3000 then
+		gl_InternetDelay = 3000
+	end
+	
+	timer.Sleep(gl_InternetDelay)
+	
     if gl_Debug then
         echo("TiÕn hµnh läc ®å!")
     end
@@ -314,7 +329,7 @@ function LocDo()
     while nFreeHanhTrang == getFreeHanhTrang(false) do 
         timer.Sleep(500)
         if (os.clock() - gl_FirstTime) > 1 then
-            gl_EnterWait = 500
+            --gl_EnterWait = 500
             if gl_Debug then
                 echoRed("CËp nhËt hµnh trang thÊt b¹i")
             end
@@ -434,7 +449,7 @@ function enter()
     end
     timer.Sleep(gl_EnterWait)
     system.SendKey(13, 1)
-    gl_EnterWait = 200
+    --gl_EnterWait = 30
 end
 
 function nhapso(nSo)
@@ -466,6 +481,7 @@ function tablelength(T)
 end
 
 function ShopItem(nIndex)
+	local startTime = os.clock()*1000
     if gl_Tien then
         gl_TienHanhTrang = player.GetMoney(0)
         shop.Buy(nIndex)
@@ -483,6 +499,10 @@ function ShopItem(nIndex)
             end
         end
     end
+	gl_InternetDelay = (os.clock()*1000 - startTime) + 30
+	if gl_InternetDelay < 150 then
+		gl_InternetDelay = 150
+	end
 end
 
 function writeMenu()
@@ -544,11 +564,12 @@ function echoDonate()
 end
 
 function echoQuangCao()
-    if gl_QuangCao and gl_QuangCaoCount > 20 then
-        -- tbVulanLib.Chat("CH_WORLD", "<enter>Chung NguyÔn<enter>võa update auto läc ®.å version 2.0<enter>Tèc ®é ¸nh s¸ng - kh«ng lag - free")
+    if gl_QuangCao and gl_QuangCaoCount > 40 then
+        -- tbVulanLib.Chat("CH_WORLD", "<enter>Chung NguyÔn<enter>võa update auto läc ®.å version 2.2<enter>Tèc ®é ¸nh s¸ng - kh«ng lag - free")
         gl_QuangCaoCount = 0
     end
-    tbVulanLib.Chat("CH_NEARBY", "<color=green>Auto ChungNguyÔn max speed, free :0")
+    --tbVulanLib.Chat("CH_NEARBY", "<color=green>Auto ChungNguyÔn max speed, free :0")
+    tbVulanLib.Chat("CH_NEARBY", "<bclr=blue>§å VIP ¬i ra nµo! :0")
     gl_QuangCaoCount = gl_QuangCaoCount + 1
 end
 
@@ -698,7 +719,7 @@ tbThuocTinhName = {
 
 
 -- Start
-nFreeHanhTrang = getFreeHanhTrang(false)
+nFreeHanhTrang = 61
 echoLine()
 echo("Scripts phiªn b¶n " .. chungVersion .. " || " .. chungVersionDate)
 echoGreen("Chung NguyÔn Blog: https://chungnguyen.xyz")
