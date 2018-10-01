@@ -3,8 +3,8 @@ IncludeFile(szVulanLib)
 ------------------------------------------------------------
 
 -- Global Vari ---------------------------------------------
-chungVersion = "2.1"
-chungVersionDate = "29/09/2018"
+chungVersion = "2.2"
+chungVersionDate = "01/10/2018"
 gl_Time = os.clock()
 gl_TimeSuDoThiep = gl_Time
 gl_FirstTime = gl_Time
