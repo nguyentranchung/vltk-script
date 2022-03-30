@@ -1,4 +1,4 @@
-szVulanLib = system.GetScriptFolder().."\\LIB\\VulanLib.lua"
+szVulanLib = system.GetScriptFolder() .. "\\LIB\\VulanLib.lua"
 IncludeFile(szVulanLib)
 ------------------------------------------------------------
 
@@ -38,7 +38,7 @@ end
 
 function clickMenu(nIndex)
     if hasMenu(gl_MenuSkip) then
-		timer.Sleep(gl_menuClickSpeed)
+        timer.Sleep(gl_menuClickSpeed)
         local nType = getMenuType()
         -- while menu.GetText(nType, nIndex) == preMenuText do
         --     timer.Sleep(gl_menuClickSpeed)
@@ -65,7 +65,7 @@ function clickMenuNext(nIndex)
 end
 
 function clickMenuAll(...)
-    for i,v in ipairs(arg) do
+    for i, v in ipairs(arg) do
         if clickMenu(v) == false then
             resetMenuDialog()
             break
@@ -76,9 +76,9 @@ end
 function resetMenuDialog()
     if dialog.IsVisible() then
         dialog.Close()
-		if dialog.IsVisible() == 1 then
-			system.SendKey(27, 1)
-		end
+        if dialog.IsVisible() == 1 then
+            system.SendKey(27, 1)
+        end
     end
     if menu.IsVisible(1) then
         menu.Close(1)
@@ -101,33 +101,49 @@ function clickText(szText)
 end
 
 function x2_sudothiep()
-if player.GetLevel() > 79 then return end
-if os.clock() - gl_TimeSuDoThiep < 30 then return end
-if player.IsFightMode() == 0 then return end
-if player.IsActiveState(76) == 1 then return end
-gl_TimeSuDoThiep = os.clock()
-echo("BËt "..szSuDoThiep)
-tbVulanLib.UseItemName(szSuDoThiep)
-echo("BËt "..szSuDoThiep.. ' kÕt thóc')
+    if player.GetLevel() > 79 then
+        return
+    end
+    if os.clock() - gl_TimeSuDoThiep < 30 then
+        return
+    end
+    if player.IsFightMode() == 0 then
+        return
+    end
+    if player.IsActiveState(76) == 1 then
+        return
+    end
+    gl_TimeSuDoThiep = os.clock()
+    echo("BËt " .. szSuDoThiep)
+    tbVulanLib.UseItemName(szSuDoThiep)
+    echo("BËt " .. szSuDoThiep .. ' kÕt thóc')
 end
 
 function check_state()
-    for i=1,500 do
+    for i = 1, 500 do
         if player.IsActiveState(i) == 1 then
             echo(i)
         end
     end
 end
 
+function thieulam()
+    return (player.GetSeries() == 0 and player.GetStature() == 1)
+end
+
 function bat_heal()
     local nMana = player.GetMana()
-if nMana > 50 then return end
-if player.GetLevel() > 80 then return end
+    if nMana > 50 then
+        return
+    end
+    if player.GetLevel() > 80 then
+        return
+    end
     -- if player.IsActiveState(52) == 1 then return end
     echo("NhËn vßng s¸ng")
     tbVulanLib.UseItemName("CÈm nang ®ång hµnh")
-    tbVulanLib.WaitMenuTimeOut(0,2)
-    clickMenu(0,0)
+    tbVulanLib.WaitMenuTimeOut(0, 2)
+    clickMenu(0)
 end
 
 function checkVar(var)
@@ -160,7 +176,7 @@ function checkNPC()
     for i = 0, 255 do
         if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
             local nx, ny = npc.GetMapPos(i)
-            echo(npc.GetName(i) .. ' kind: ' .. npc.GetKind(i) .. " length: " ..string.len(npc.GetName(i)))
+            echo(npc.GetName(i) .. ' kind: ' .. npc.GetKind(i) .. " length: " .. string.len(npc.GetName(i)))
         end
     end
 end
@@ -191,7 +207,7 @@ function showNPC()
 end
 
 function writeNPC()
-    local file = io.open (gl_ScriptFolder .. "\\npc.txt", "w")
+    local file = io.open(gl_ScriptFolder .. "\\npc.txt", "w")
     for i = 0, 255 do
         if npc.GetKind(i) == 3 and npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
             local nx, ny = npc.GetMapPos(i)
@@ -206,7 +222,7 @@ function writeMapPath()
     echoRed("Ghi l¹i qu·ng ®­êng nh©n vËt di chuyÓn!")
     local x = 0
     local time = os.date("*t", os.time())
-    local file = io.open (gl_ScriptFolder .. "\\mapPath.txt", "w")
+    local file = io.open(gl_ScriptFolder .. "\\mapPath.txt", "w")
     file:write("local mapPath = {")
     -- s
     while true and x < 20 do
@@ -230,7 +246,7 @@ function talkNPC(szNPCName)
     for i = 2, 255 do
         local nx, ny = npc.GetMapPos(i)
         if npc.GetKind(i) == 3 and filled(szNPCName) and npc.GetName(i) == szNPCName then
-            echo ("T×m thÊy " .. szNPCName .. " sÏ nãi chuyÖn trong chèc l¸t")
+            echo("T×m thÊy " .. szNPCName .. " sÏ nãi chuyÖn trong chèc l¸t")
             echo(nx .. "/" .. ny)
             player.DialogNpc(i)
             hasDialogOrMenu(4)
@@ -251,7 +267,7 @@ function talkNPC(szNPCName)
             echo(minLength)
         end
         if minLength > 1100 then
-            echo ("Kh«ng nhËp vµo tªn npc, nãi chuyÖn víi ng­êi gÇn nhÊt: " .. npc.GetName(indexNPC))
+            echo("Kh«ng nhËp vµo tªn npc, nãi chuyÖn víi ng­êi gÇn nhÊt: " .. npc.GetName(indexNPC))
             player.DialogNpc(indexNPC)
             hasDialogOrMenu(4)
             echo("Nãi chuyÖn thµnh c«ng!")
@@ -268,8 +284,8 @@ end
 
 function hasDialogOrMenu(nSecond)
     gl_FirstTime = os.clock()
-    while menu.IsVisible(0) == 0 and menu.IsVisible(1) == 0 and dialog.IsVisible() == 0 do 
-        timer.Sleep(gl_Sleep) 
+    while menu.IsVisible(0) == 0 and menu.IsVisible(1) == 0 and dialog.IsVisible() == 0 do
+        timer.Sleep(gl_Sleep)
         if (os.clock() - gl_FirstTime) > nSecond then
             return false
         end
@@ -279,20 +295,20 @@ end
 
 function hasMenu(nSecond)
     gl_FirstTime = os.clock()
-    while menu.IsVisible(0) == 0 and menu.IsVisible(1) == 0 do 
-        timer.Sleep(gl_Sleep) 
+    while menu.IsVisible(0) == 0 and menu.IsVisible(1) == 0 do
+        timer.Sleep(gl_Sleep)
         if (os.clock() - gl_FirstTime) > nSecond then
             return false
         end
     end
-    timer.Sleep(20) 
+    timer.Sleep(20)
     return true
 end
 
 function hasDialog(nSecond)
     gl_FirstTime = os.clock()
-    while dialog.IsVisible() == 0 do 
-        timer.Sleep(gl_Sleep) 
+    while dialog.IsVisible() == 0 do
+        timer.Sleep(gl_Sleep)
         if (os.clock() - gl_FirstTime) > nSecond then
             return false
         end
@@ -310,26 +326,25 @@ function testLength()
     end
 end
 
-
 function LocDo()
-	if gl_InternetDelay == nil then
-		gl_InternetDelay = 150
-	end
-	
-	if gl_InternetDelay > 3000 then
-		gl_InternetDelay = 3000
-	end
-	
-	timer.Sleep(gl_InternetDelay)
-	
+    if gl_InternetDelay == nil then
+        gl_InternetDelay = 150
+    end
+
+    if gl_InternetDelay > 3000 then
+        gl_InternetDelay = 3000
+    end
+
+    timer.Sleep(gl_InternetDelay)
+
     if gl_Debug then
         echo("TiÕn hµnh läc ®å!")
     end
     gl_FirstTime = os.clock()
-    while nFreeHanhTrang == getFreeHanhTrang(false) do 
+    while nFreeHanhTrang == getFreeHanhTrang(false) do
         timer.Sleep(500)
         if (os.clock() - gl_FirstTime) > 1 then
-            --gl_EnterWait = 500
+            -- gl_EnterWait = 500
             if gl_Debug then
                 echoRed("CËp nhËt hµnh trang thÊt b¹i")
             end
@@ -378,11 +393,12 @@ function LocDo()
     end
     if nVip > 0 then
         echo('Trong hµnh trang cã ' .. nVip .. ' ®å vÝp')
-        tbVulanLib.Chat("CH_NEARBY","<color=green>Trong hµnh trang cã " .. nVip .. " mãn vÝp :0!")
+        tbVulanLib.Chat("CH_NEARBY", "<color=green>Trong hµnh trang cã " .. nVip .. " mãn vÝp :0!")
     end
     if nVip > 0 and os.time() - gl_Time > 20 then
         echoRed(line())
-        echoGreen("Auto Läc ®å ch¹y rÊt hiÖu qu¶ vµ miÔn phÝ, b¹n cã muèn ñng hé t¸c gi¶ ph¸t triÓn thªm tÝnh n¨ng kh«ng?")
+        echoGreen(
+            "Auto Läc ®å ch¹y rÊt hiÖu qu¶ vµ miÔn phÝ, b¹n cã muèn ñng hé t¸c gi¶ ph¸t triÓn thªm tÝnh n¨ng kh«ng?")
         echoDonate()
         gl_Time = os.time()
     end
@@ -397,7 +413,7 @@ function GuiDo(nIndex, nXLocDo, nYLocDo)
         local bFound, nXGuiDo, nYGuiDo = player.FindRoom(nWidthGuiDo, nHeightGuiDo, 1)
         if bFound then
             echoRed("B¹n ph¶i ch¾n ch¾n r­¬ng ch­a ®å ®ang ®­îc më s½n!!!")
-            item.Move(3,nXLocDo, nYLocDo,0,0,0)
+            item.Move(3, nXLocDo, nYLocDo, 0, 0, 0)
             while item.IsHold() == 0 do
                 echo("no hold")
                 timer.Sleep(500)
@@ -409,7 +425,7 @@ function GuiDo(nIndex, nXLocDo, nYLocDo)
                 if os.clock() - gl_FirstTime > 5 then
                     echoRed("R­¬ng ®å ch­a më, t¾t tÝnh n¨ng göi ®å!!!")
                     gl_GuiDo = false
-                    item.Move(3,nXLocDo, nYLocDo, 3,nXLocDo, nYLocDo)
+                    item.Move(3, nXLocDo, nYLocDo, 3, nXLocDo, nYLocDo)
                     break
                 end
             end
@@ -423,7 +439,7 @@ end
 function writeThuocTinh()
     echoRed('Ghi toµn bé thuéc tÝnh cã trong hµnh trang ra file')
     local nIndex, nPlace, nX, nY = item.GetFirst()
-    local file = io.open (gl_ScriptFolder .. "\\option.txt", "w+")
+    local file = io.open(gl_ScriptFolder .. "\\option.txt", "w+")
     while nIndex ~= 0 do
         local nGenre, nDetail, nParticular = item.GetKey(nIndex)
         local szName = item.GetName(nIndex)
@@ -434,10 +450,23 @@ function writeThuocTinh()
             file:write(szName .. '\n')
             for i = 0, 5 do
                 local nMagicType, nValue1, nValue2, nValue3 = item.GetMagicAttrib(nIndex, i)
-                echo('Dßng ' .. (i+1) .. ': ' .. nMagicType .. ' - ' .. nValue1)
+                echo('Dßng ' .. (i + 1) .. ': ' .. nMagicType .. ' - ' .. nValue1)
                 file:write('[' .. nMagicType .. '] = ' .. nValue1 .. ',' .. '\n')
             end
         end
+        nIndex, nPlace, nX, nY = item.GetNext()
+    end
+    file:close(file)
+end
+
+function writeHanhTrang()
+    echoRed('Ghi tªn c¸c vËt phÈm trong hµnh trang')
+    local nIndex, nPlace, nX, nY = item.GetFirst()
+    local file = io.open(gl_ScriptFolder .. "\\logs\\items", "w+")
+    while nIndex ~= 0 do
+        local szName = item.GetName(nIndex)
+        echo(szName)
+        file:write(szName .. '\n')
         nIndex, nPlace, nX, nY = item.GetNext()
     end
     file:close(file)
@@ -449,7 +478,7 @@ function enter()
     end
     timer.Sleep(gl_EnterWait)
     system.SendKey(13, 1)
-    --gl_EnterWait = 30
+    -- gl_EnterWait = 30
 end
 
 function nhapso(nSo)
@@ -481,7 +510,7 @@ function tablelength(T)
 end
 
 function ShopItem(nIndex)
-	local startTime = os.clock()*1000
+    local startTime = os.clock() * 1000
     if gl_Tien then
         gl_TienHanhTrang = player.GetMoney(0)
         shop.Buy(nIndex)
@@ -499,10 +528,10 @@ function ShopItem(nIndex)
             end
         end
     end
-	gl_InternetDelay = (os.clock()*1000 - startTime) + 30
-	if gl_InternetDelay < 150 then
-		gl_InternetDelay = 150
-	end
+    gl_InternetDelay = (os.clock() * 1000 - startTime) + 30
+    if gl_InternetDelay < 150 then
+        gl_InternetDelay = 150
+    end
 end
 
 function writeMenu()
@@ -510,9 +539,9 @@ function writeMenu()
     if menu.IsVisible(1) == 0 then
         nType = 0
     end
-    local file = io.open (gl_ScriptFolder .. "\\menu.txt", "w")
-    for i=0, menu.GetCount(nType) do
-        echo (menu.GetText(nType, i))
+    local file = io.open(gl_ScriptFolder .. "\\menu.txt", "w")
+    for i = 0, menu.GetCount(nType) do
+        echo(menu.GetText(nType, i))
         file:write(toSlug(menu.GetText(nType, i)) .. '\n')
     end
     file:close(file)
@@ -555,6 +584,7 @@ end
 function echoLine()
     echo(line())
 end
+
 function echoDonate()
     echoRed(line())
     echo("Chñ TK: NGUYEN TRAN CHUNG")
@@ -568,101 +598,86 @@ function echoQuangCao()
         -- tbVulanLib.Chat("CH_WORLD", "<enter>Chung NguyÔn<enter>võa update auto läc ®.å version 2.2<enter>Tèc ®é ¸nh s¸ng - kh«ng lag - free")
         gl_QuangCaoCount = 0
     end
-    --tbVulanLib.Chat("CH_NEARBY", "<color=green>Auto ChungNguyÔn max speed, free :0")
+    -- tbVulanLib.Chat("CH_NEARBY", "<color=green>Auto ChungNguyÔn max speed, free :0")
     tbVulanLib.Chat("CH_NEARBY", "<bclr=blue>§å VIP ¬i ra nµo! :0")
     gl_QuangCaoCount = gl_QuangCaoCount + 1
 end
 
 function toSlug(str)
-    str = string.gsub(str,"iÕ","tiet")
-    str = string.gsub(str,"§¸i","dai")
-    str = string.gsub(str,"§­","d")
-    str = string.gsub(str,"ê","uo")
-    str = string.gsub(str,"­u","uu")
-    str = string.gsub(str,"¤","o")
-    str = string.gsub(str,"¢","a")
-    str = string.gsub(str,"uyÕ","uye")
-    return str
-    :gsub('%®¹o', 'dao') -- duong
-
+    str = string.gsub(str, "iÕ", "tiet")
+    str = string.gsub(str, "§¸i", "dai")
+    str = string.gsub(str, "§­", "d")
+    str = string.gsub(str, "ê", "uo")
+    str = string.gsub(str, "­u", "uu")
+    str = string.gsub(str, "¤", "o")
+    str = string.gsub(str, "¢", "a")
+    str = string.gsub(str, "uyÕ", "uye")
+    return str:gsub('%®¹o', 'dao') -- duong
     :gsub('%­­®', 'd') -- dd
-
     :gsub('%­­­øu', 'uu') -- uuws
     :gsub('%­­­õu', 'uu') -- uuwf
     :gsub('%­­­÷u', 'uu') -- uuwx
     :gsub('%öu', 'uu') -- uuwr
     :gsub('%­­ùu', 'uu') -- uuwj
-
     :gsub('%¸', 'a') -- as
     :gsub('%µ', 'a') -- af
     :gsub('%·', 'a') -- ax
     :gsub('%¶', 'a') -- ar
     :gsub('%¹', 'a') -- aj
-
     :gsub('%©', 'a') -- aa
     :gsub('%Ê', 'a') -- aas
     :gsub('%Ç', 'a') -- aaf
     :gsub('%É', 'a') -- aax
     :gsub('%È', 'a') -- aar
     :gsub('%Ë', 'a') -- aaj
-
     :gsub('%¨', 'a') -- aw
     :gsub('%¾', 'a') -- aws
     :gsub('%»', 'a') -- awf
     :gsub('%½', 'a') -- awx
     :gsub('%¼', 'a') -- awr
     :gsub('%Æ', 'a') -- awj
-
     :gsub('%Ð', 'e') -- es
     :gsub('%Ì', 'e') -- ef
     :gsub('%Ï', 'e') -- ex
     :gsub('%Î', 'e') -- er
     :gsub('%Ñ', 'e') -- ej
-
     :gsub('%Õ', 'e') -- ees
     :gsub('%Ò', 'e') -- eef
     :gsub('%Ô', 'e') -- eex
     :gsub('%Ó', 'e') -- eer
     :gsub('%Ö', 'e') -- eej
-
     :gsub('%Ý', 'i') -- is
     :gsub('%×', 'i') -- if
     :gsub('%Ü', 'i') -- ix
     :gsub('%Ø', 'i') -- ir
     :gsub('%Þ', 'i') -- ij
-
     :gsub('%ã', 'o') -- os
     :gsub('%ß', 'o') -- of
     :gsub('%â', 'o') -- ox
     :gsub('%á', 'o') -- or
     :gsub('%ä', 'o') -- oj
-
     :gsub('%«', 'o') -- oo
     :gsub('%è', 'o') -- oos
     :gsub('%å', 'o') -- oof
     :gsub('%ç', 'o') -- oox
     :gsub('%æ', 'o') -- oor
     :gsub('%é', 'o') -- ooj
-
     :gsub('%ý', 'y') -- s
     :gsub('%ú', 'y') -- f
     :gsub('%ü', 'y') -- x
     :gsub('%û', 'y') -- r
     :gsub('%þ', 'y') -- j
-
     :gsub('%ó', 'u') -- us
     :gsub('%ï', 'u') -- uf
     :gsub('%ò', 'u') -- ux
     :gsub('%ñ', 'u') -- ur
     :gsub('%ô', 'u') -- uj
-
     :gsub('%­¬', 'uo') -- uow
     :gsub('%­­­í', 'uo') -- uos
     :gsub('%­­­ê', 'uo') -- uof
     :gsub('%­­­ì', 'uo') -- uox
     :gsub('%­­­ë', 'uo') -- uor
     :gsub('%­­î', 'uo') -- uoj
-
     -- :gsub(' I$', '1')
     -- :gsub(' II$', '2')
     -- :gsub(' III$', '3')
@@ -673,50 +688,49 @@ function toSlug(str)
 end
 
 tbThuocTinhName = {
-    [43] = "Kh«ng thÓ ph¸ hñy", 
-    [58] = "Bá qua nÐ tr¸nh", 
-    [85] = "Sinh lùc", 
-    [89] = "Néi lùc", 
-    [93] = "ThÓ lùc", 
-    [97] = "Søc m¹nh", 
+    [43] = "Kh«ng thÓ ph¸ hñy",
+    [58] = "Bá qua nÐ tr¸nh",
+    [85] = "Sinh lùc",
+    [89] = "Néi lùc",
+    [93] = "ThÓ lùc",
+    [97] = "Søc m¹nh",
     [98] = "Th©n ph¸p",
-    [99] = "Sinh khÝ", 
-    [88] = "Phôc håi sinh lùc mçi nöa gi©y", 
-    [92] = "Phôc håi néi lùc mçi nöa gi©y", 
-    [96] = "Phôc håi thÓ lùc mçi nöa gi©y", 
-    [101] = "Kh¸ng ®äc", 
-    [102] = "Kh¸ng háa", 
-    [103] = "Kh¸ng l«i", 
-    [104] = "Phßng thñ vËt lý", 
-    [105] = "Kh¸ng b¨ng", 
-    [106] = "TG lµm chËm", 
-    [108] = "TG tróng ®äc", 
-    [110] = "TG lµm cho¸ng", 
-    [111] = "Tèc ®é di chuyÓn", 
-    [113] = "TG phôc håi", 
-    [115] = "Tèc ®é ®¸nh (ngo¹i c«ng)", 
-    [116] = "Tèc ®é ®¸nh (néi c«ng)", 
-    [114] = "Kh¸ng tÊt c¶", 
-    [117] = "Ph¶n ®ßn cËn chiÕn", 
-    [135] = "May m¾n %", 
-    [121] = "STVL ®iÓm", 
-    [122] = "Háa s¸t ngo¹i c«ng", 
-    [123] = "B¨ng s¸t ngo¹i c«ng", 
-    [124] = "L«i s¸t s¸t ngo¹i c«ng", 
-    [125] = "§éc s¸t ngo¹i c«ng", 
-    [126] = "STVL %", 
-    [134] = "CHSTTNL", 
-    [136] = "Hót sinh lùc", 
-    [137] = "Hót néi lùc", 
-    [139] = "Kü n¨ng MP", 
-    [166] = "TØ lÖ c«ng kÝch chÝnh x¸c", 
-    [168] = "STVL néi c«ng", 
-    [169] = "B¨ng s¸t néi c«ng", 
-    [170] = "Háa s¸t néi c«ng", 
-    [171] = "L«i s¸t néi c«ng", 
-    [172] = "§éc s¸t néi c«ng,"  
+    [99] = "Sinh khÝ",
+    [88] = "Phôc håi sinh lùc mçi nöa gi©y",
+    [92] = "Phôc håi néi lùc mçi nöa gi©y",
+    [96] = "Phôc håi thÓ lùc mçi nöa gi©y",
+    [101] = "Kh¸ng ®äc",
+    [102] = "Kh¸ng háa",
+    [103] = "Kh¸ng l«i",
+    [104] = "Phßng thñ vËt lý",
+    [105] = "Kh¸ng b¨ng",
+    [106] = "TG lµm chËm",
+    [108] = "TG tróng ®äc",
+    [110] = "TG lµm cho¸ng",
+    [111] = "Tèc ®é di chuyÓn",
+    [113] = "TG phôc håi",
+    [115] = "Tèc ®é ®¸nh (ngo¹i c«ng)",
+    [116] = "Tèc ®é ®¸nh (néi c«ng)",
+    [114] = "Kh¸ng tÊt c¶",
+    [117] = "Ph¶n ®ßn cËn chiÕn",
+    [135] = "May m¾n %",
+    [121] = "STVL ®iÓm",
+    [122] = "Háa s¸t ngo¹i c«ng",
+    [123] = "B¨ng s¸t ngo¹i c«ng",
+    [124] = "L«i s¸t s¸t ngo¹i c«ng",
+    [125] = "§éc s¸t ngo¹i c«ng",
+    [126] = "STVL %",
+    [134] = "CHSTTNL",
+    [136] = "Hót sinh lùc",
+    [137] = "Hót néi lùc",
+    [139] = "Kü n¨ng MP",
+    [166] = "TØ lÖ c«ng kÝch chÝnh x¸c",
+    [168] = "STVL néi c«ng",
+    [169] = "B¨ng s¸t néi c«ng",
+    [170] = "Háa s¸t néi c«ng",
+    [171] = "L«i s¸t néi c«ng",
+    [172] = "§éc s¸t néi c«ng,"
 }
-
 
 -- Start
 nFreeHanhTrang = 61
