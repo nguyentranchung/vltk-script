@@ -472,6 +472,61 @@ function writeHanhTrang()
     file:close(file)
 end
 
+function TangLucTayThieuLam()
+    local nMinExp, nMaxExp= player.GetExperience()
+
+    -- writeHanhTrang()
+    -- MangChuyVaoNguoi("Ngò Tinh chïy")
+    echo(nMinExp)
+    echo(nMaxExp)
+    local nIndex, nPlace, nX, nY = item.GetFirst()
+    -- while item.GetEquipmentIndex(3) == 0 do
+    --     echo("Chua mang vu khi")
+    --     timer.Sleep(500)
+    -- end
+    while nIndex ~= 0 do
+        local szName = item.GetName(nIndex)
+        if nPlace == 2 then
+            -- if nPlace == 2 and szName == "Ngò Tinh chïy" then
+            echo(szName)
+            echo(nIndex)
+            echo(nX)
+            echo(nY)
+            -- timer.Sleep(500)
+            -- item.Use(nIndex)
+            item.Move(nPlace, nX, nY, 0, 0, 0)
+            return
+            -- while item.IsHold() == 0 do
+            --     echo("IsHold 0")
+            --     timer.Sleep(500)
+            -- end
+            -- item.Move(nIndex, 1, 1, 3, 1, 1)
+            -- while item.IsHold() == 1 do
+            --     echo("IsHold 1")
+            --     timer.Sleep(500)
+            -- end
+            -- echo("okkkkkkkkkkkkkkkkkkkkk")
+        end
+        nIndex, nPlace, nX, nY = item.GetNext()
+    end
+end
+
+function MangChuyVaoNguoi(szItemName)
+    if item.GetEquipmentIndex(3) > 0 then
+        return
+    end
+    -- local szItemName = szItemName or 'LÖnh bµi T©n Thñ'
+    local nIndex, nPlace, nX, nY = item.GetFirst()
+    while nIndex ~= 0 do
+        local szName = item.GetName(nIndex)
+        if (szName == szItemName) then
+            item.Use(nIndex, nPlace, nX, nY)
+            return
+        end
+        nIndex, nPlace, nX, nY = item.GetNext()
+    end
+end
+
 function enter()
     if gl_Debug then
         echo("Enter Sleep: " .. gl_EnterWait)

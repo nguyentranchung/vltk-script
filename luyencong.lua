@@ -4,7 +4,9 @@ IncludeFile(szChungLib)
 function main()
     nFirstTime = os.clock()
     nBatVongSang = nFirstTime
-
+    if (thieulam()) then
+        TangLucTayThieuLam()
+    end
     while true do
         nCurrentTime = os.clock()
         nDiffSecond = nCurrentTime - nFirstTime
@@ -13,9 +15,14 @@ function main()
         -- echo(nDiffSecond)
 
         -- Bat Vong Sang
-        if (nBatVongSang == nFirstTime or os.clock() - nBatVongSang > 60) then
-            BatVongSang()
+        if (nBatVongSang == nFirstTime or os.clock() - nBatVongSang > 600) then
+            -- BatVongSang()
             nBatVongSang = os.clock()
+        end
+
+        -- bug luc tay thieu lam
+        if (thieulam()) then
+            -- TangLucTayThieuLam()
         end
         timer.Sleep(1000)
     end
