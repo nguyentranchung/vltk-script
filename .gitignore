@@ -1,1 +1,2 @@
-logs/items
+logs
+# java -jar unluac_2022_01_12.jar chung.luac > chungxxx.lua

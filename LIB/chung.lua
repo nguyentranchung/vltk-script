@@ -1,5 +1,7 @@
 szVulanLib = system.GetScriptFolder() .. "\\LIB\\VulanLib.lua"
 IncludeFile(szVulanLib)
+szTHP = system.GetScriptFolder() .. "\\LIB\\THP.lua"
+IncludeFile(szTHP)
 ------------------------------------------------------------
 
 -- Global Vari ---------------------------------------------
@@ -206,8 +208,13 @@ function showNPC()
     end
 end
 
+function Doi10TienDong()
+    talkNPC("TiÒn Trang Ba L¨ng")
+    clickMenuAll(0, 4, 2)
+end
+
 function writeNPC()
-    local file = io.open(gl_ScriptFolder .. "\\npc.txt", "w")
+    local file = io.open(gl_ScriptFolder .. "\\logs\\npc", "w")
     for i = 0, 255 do
         if npc.GetKind(i) == 3 and npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
             local nx, ny = npc.GetMapPos(i)
@@ -472,8 +479,51 @@ function writeHanhTrang()
     file:close(file)
 end
 
+function writeObject()
+    echoRed('Ghi tªn c¸c vËt phÈm ®ang rít')
+    local file = io.open(gl_ScriptFolder .. "\\logs\\objects", "w+")
+    for i = 1, 255 do
+        if object.IsExists(i) then
+            if string.len(object.GetName(i)) > 0 then
+                local szObjectName = object.GetName(i)
+                echo(szObjectName)
+                file:write(object.GetName(i) .. '\n')
+            end
+        end
+    end
+    file:close(file)
+end
+
+function TimDoSucManh()
+    TimDo(98)
+end
+
+function TimDoTGLC()
+    TimDo(106)
+end
+
+function TimDo(findnMagicType)
+    echoRed('T×m ®å b¾t ®Çu')
+    local nIndex, nPlace, nX, nY = item.GetFirst()
+    while nIndex ~= 0 do
+        local nGenre, nDetail, nParticular = item.GetKey(nIndex)
+        local szName = item.GetName(nIndex)
+        if nGenre == 0 and item.GetPrice(nIndex) > 0 then
+            for i = 0, 5 do
+                local nMagicType, nValue1, nValue2, nValue3 = item.GetMagicAttrib(nIndex, i)
+                if (findnMagicType == nMagicType) then
+                    echo(szName)
+                    echo('Dßng ' .. (i + 1) .. ': ' .. nValue1)
+                end
+            end
+        end
+        nIndex, nPlace, nX, nY = item.GetNext()
+    end
+    echoRed('T×m ®å kÕt thóc')
+end
+
 function TangLucTayThieuLam()
-    local nMinExp, nMaxExp= player.GetExperience()
+    local nMinExp, nMaxExp = player.GetExperience()
 
     -- writeHanhTrang()
     -- MangChuyVaoNguoi("Ngò Tinh chïy")
@@ -600,6 +650,32 @@ function writeMenu()
         file:write(toSlug(menu.GetText(nType, i)) .. '\n')
     end
     file:close(file)
+end
+
+function getAllData(t, prevData)
+    -- if prevData == nil, start empty, otherwise start with prevData
+    local data = prevData or {}
+
+    -- copy all the attributes from t
+    for k, v in pairs(t) do
+        data[k] = data[k] or v
+        echo(k)
+    end
+
+    -- get t's metatable, or exit if not existing
+    local mt = getmetatable(t)
+    if type(mt) ~= 'table' then
+        return data
+    end
+
+    -- get the __index from mt, or exit if not table
+    local index = mt.__index
+    if type(index) ~= 'table' then
+        return data
+    end
+
+    -- include the data from index into data, recursively, and return
+    return getAllData(index, data)
 end
 
 function blank(var)

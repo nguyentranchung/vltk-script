@@ -2,16 +2,16 @@ szChungLib = system.GetScriptFolder() .. "\\LIB\\chung.lua"
 IncludeFile(szChungLib)
 
 function main()
+    -- writeNPC()
+    -- writeObject()
     -- writeHanhTrang()
-    tbVulanLib.UseItemName("ThÇn Hµnh Phï")
-    lahantran()
-end
-
-function lahantran()
-    CamRuongDuongChau()
-    clickMenuAll(1, 0, 5, 3) -- 108 la han tran
-end
-
-function CamRuongDuongChau()
-    clickMenuAll(0, 6, 0, 0) -- 108 la han tran
+    TimDoTGLC()
+    getAllData(object)
+    writeObject()
+    for i = 0, 79 do
+        local nSkillID = skill.GetID(i)
+        if (nSkillID ~= nil) then
+            -- echo(nSkillID)
+        end
+    end
 end
