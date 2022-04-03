@@ -2,6 +2,12 @@ szVulanLib = system.GetScriptFolder() .. "\\LIB\\VulanLib.lua"
 IncludeFile(szVulanLib)
 szTHP = system.GetScriptFolder() .. "\\LIB\\THP.lua"
 IncludeFile(szTHP)
+libDaTau = system.GetScriptFolder() .. "\\LIB\\datau.lua"
+IncludeFile(libDaTau)
+libNpc = system.GetScriptFolder() .. "\\LIB\\npc.lua"
+IncludeFile(libNpc)
+libHelper = system.GetScriptFolder() .. "\\LIB\\helper.lua"
+IncludeFile(libHelper)
 ------------------------------------------------------------
 
 -- Global Vari ---------------------------------------------
@@ -174,55 +180,10 @@ function box(szContent)
     system.MessageBox(szContent)
 end
 
-function checkNPC()
-    for i = 0, 255 do
-        if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
-            local nx, ny = npc.GetMapPos(i)
-            echo(npc.GetName(i) .. ' kind: ' .. npc.GetKind(i) .. " length: " .. string.len(npc.GetName(i)))
-        end
-    end
-end
-
-function showNPC()
-    for i = 0, 255 do
-        if npc.GetKind(i) == 0 and npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
-            local nx, ny = npc.GetMapPos(i)
-            local szHe = " kh«ng râ "
-            if npc.GetSeries(i) == 0 then
-                szHe = " hÖ kim "
-            end
-            if npc.GetSeries(i) == 1 then
-                szHe = " hÖ méc "
-            end
-            if npc.GetSeries(i) == 2 then
-                szHe = " hÖ thñy "
-            end
-            if npc.GetSeries(i) == 3 then
-                szHe = " hÖ háa "
-            end
-            if npc.GetSeries(i) == 4 then
-                szHe = " hÖ thæ "
-            end
-            echo(npc.GetName(i) .. szHe .. npc.GetLife(i))
-        end
-    end
-end
 
 function Doi10TienDong()
     talkNPC("TiÒn Trang Ba L¨ng")
     clickMenuAll(0, 4, 2)
-end
-
-function writeNPC()
-    local file = io.open(gl_ScriptFolder .. "\\logs\\npc", "w")
-    for i = 0, 255 do
-        if npc.GetKind(i) == 3 and npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
-            local nx, ny = npc.GetMapPos(i)
-            -- file:write("npc_" .. toSlug(npc.GetName(i)) .. " = \"" .. npc.GetName(i) .. "\"", "\n")
-            file:write("\"" .. npc.GetName(i) .. "\"", "\n")
-        end
-    end
-    file:close()
 end
 
 function writeMapPath()
@@ -244,49 +205,6 @@ function writeMapPath()
     end
     file:close()
     echoRed("Ghi l¹i thµnh c«ng!")
-end
-
-function talkNPC(szNPCName)
-    local minLength = 999999
-    local indexNPC = 2
-
-    for i = 2, 255 do
-        local nx, ny = npc.GetMapPos(i)
-        if npc.GetKind(i) == 3 and filled(szNPCName) and npc.GetName(i) == szNPCName then
-            echo("T×m thÊy " .. szNPCName .. " sÏ nãi chuyÖn trong chèc l¸t")
-            echo(nx .. "/" .. ny)
-            player.DialogNpc(i)
-            hasDialogOrMenu(4)
-            echo("Nãi chuyÖn thµnh c«ng!")
-            echoLine()
-            return true
-        end
-        if npc.GetKind(i) == 3 and blank(szNPCName) then
-            if getDistance(nx, ny) < minLength then
-                indexNPC = i
-                minLength = getDistance(nx, ny)
-            end
-        end
-    end
-
-    if blank(szNPCName) then
-        if gl_Debug then
-            echo(minLength)
-        end
-        if minLength > 1100 then
-            echo("Kh«ng nhËp vµo tªn npc, nãi chuyÖn víi ng­êi gÇn nhÊt: " .. npc.GetName(indexNPC))
-            player.DialogNpc(indexNPC)
-            hasDialogOrMenu(4)
-            echo("Nãi chuyÖn thµnh c«ng!")
-            echoLine()
-            return true
-        else
-            echoRed("NPC gÇn nhÊt ®øng c¸ch qu¸ xa")
-            return false
-        end
-    end
-    echo("Nãi chuyÖn thÊt b¹i!")
-    echoLine()
 end
 
 function hasDialogOrMenu(nSecond)
@@ -441,85 +359,6 @@ function GuiDo(nIndex, nXLocDo, nYLocDo)
             echoRed("R­¬ng kh«ng cßn chç trèng!!!")
         end
     end
-end
-
-function writeThuocTinh()
-    echoRed('Ghi toµn bé thuéc tÝnh cã trong hµnh trang ra file')
-    local nIndex, nPlace, nX, nY = item.GetFirst()
-    local file = io.open(gl_ScriptFolder .. "\\option.txt", "w+")
-    while nIndex ~= 0 do
-        local nGenre, nDetail, nParticular = item.GetKey(nIndex)
-        local szName = item.GetName(nIndex)
-        -- echo (szName)
-        -- echo (nGenre .. nDetail .. nParticular)
-        if nPlace == 3 and nGenre == 0 and item.GetPrice(nIndex) > 0 then
-            echo(szName)
-            file:write(szName .. '\n')
-            for i = 0, 5 do
-                local nMagicType, nValue1, nValue2, nValue3 = item.GetMagicAttrib(nIndex, i)
-                echo('Dßng ' .. (i + 1) .. ': ' .. nMagicType .. ' - ' .. nValue1)
-                file:write('[' .. nMagicType .. '] = ' .. nValue1 .. ',' .. '\n')
-            end
-        end
-        nIndex, nPlace, nX, nY = item.GetNext()
-    end
-    file:close(file)
-end
-
-function writeHanhTrang()
-    echoRed('Ghi tªn c¸c vËt phÈm trong hµnh trang')
-    local nIndex, nPlace, nX, nY = item.GetFirst()
-    local file = io.open(gl_ScriptFolder .. "\\logs\\items", "w+")
-    while nIndex ~= 0 do
-        local szName = item.GetName(nIndex)
-        echo(szName)
-        file:write(szName .. '\n')
-        nIndex, nPlace, nX, nY = item.GetNext()
-    end
-    file:close(file)
-end
-
-function writeObject()
-    echoRed('Ghi tªn c¸c vËt phÈm ®ang rít')
-    local file = io.open(gl_ScriptFolder .. "\\logs\\objects", "w+")
-    for i = 1, 255 do
-        if object.IsExists(i) then
-            if string.len(object.GetName(i)) > 0 then
-                local szObjectName = object.GetName(i)
-                echo(szObjectName)
-                file:write(object.GetName(i) .. '\n')
-            end
-        end
-    end
-    file:close(file)
-end
-
-function TimDoSucManh()
-    TimDo(98)
-end
-
-function TimDoTGLC()
-    TimDo(106)
-end
-
-function TimDo(findnMagicType)
-    echoRed('T×m ®å b¾t ®Çu')
-    local nIndex, nPlace, nX, nY = item.GetFirst()
-    while nIndex ~= 0 do
-        local nGenre, nDetail, nParticular = item.GetKey(nIndex)
-        local szName = item.GetName(nIndex)
-        if nGenre == 0 and item.GetPrice(nIndex) > 0 then
-            for i = 0, 5 do
-                local nMagicType, nValue1, nValue2, nValue3 = item.GetMagicAttrib(nIndex, i)
-                if (findnMagicType == nMagicType) then
-                    echo(szName)
-                    echo('Dßng ' .. (i + 1) .. ': ' .. nValue1)
-                end
-            end
-        end
-        nIndex, nPlace, nX, nY = item.GetNext()
-    end
-    echoRed('T×m ®å kÕt thóc')
 end
 
 function TangLucTayThieuLam()
@@ -868,4 +707,6 @@ nFreeHanhTrang = 61
 echoLine()
 echo("Scripts phiªn b¶n " .. chungVersion .. " || " .. chungVersionDate)
 echoGreen("Chung NguyÔn Blog: https://chungnguyen.xyz")
+echo(map.GetID() .. " : "..map.GetName())
+echo("Kinh nghiÖm d· tÈu: "..quest.Datau_Exp())
 -- End
