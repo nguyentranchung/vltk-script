@@ -1,3 +1,9 @@
+-- kind_normal = quai    
+-- kind_player,
+-- kind_partner,
+-- kind_dialoger,
+-- kind_bird,
+-- kind_mouse = 5
 function writeThuocTinh()
     echoRed('Ghi toµn bé thuéc tÝnh cã trong hµnh trang ra file')
     local nIndex, nPlace, nX, nY = item.GetFirst()
@@ -52,10 +58,10 @@ end
 function writeNPC()
     local file = io.open(gl_ScriptFolder .. "\\logs\\npc", "w")
     for i = 0, 255 do
-        if npc.GetKind(i) == 3 and npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
+        if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
             local nx, ny = npc.GetMapPos(i)
             -- file:write("npc_" .. toSlug(npc.GetName(i)) .. " = \"" .. npc.GetName(i) .. "\"", "\n")
-            file:write("\"" .. npc.GetName(i) .. "\"", "\n")
+            file:write("\"" .. debugNPC(i) .. "\"", "\n")
         end
     end
     file:close()

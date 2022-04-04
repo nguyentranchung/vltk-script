@@ -19,6 +19,9 @@ end
 function TimDoTGLC()
     TimDo(106)
 end
+function TimDoTGTD()
+    TimDo(108)
+end
 
 function TimDo(findnMagicType)
     echoRed('T×m ®å b¾t ®Çu')

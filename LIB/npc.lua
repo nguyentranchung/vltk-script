@@ -11,23 +11,7 @@ function showNPC()
     for i = 0, 255 do
         if npc.GetKind(i) == 0 and npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
             local nx, ny = npc.GetMapPos(i)
-            local szHe = " kh«ng râ "
-            if npc.GetSeries(i) == 0 then
-                szHe = " hÖ kim "
-            end
-            if npc.GetSeries(i) == 1 then
-                szHe = " hÖ méc "
-            end
-            if npc.GetSeries(i) == 2 then
-                szHe = " hÖ thñy "
-            end
-            if npc.GetSeries(i) == 3 then
-                szHe = " hÖ háa "
-            end
-            if npc.GetSeries(i) == 4 then
-                szHe = " hÖ thæ "
-            end
-            echo(npc.GetName(i) .. szHe .. npc.GetLife(i))
+            debugNPC(i)
         end
     end
 end
@@ -73,4 +57,59 @@ function talkNPC(szNPCName)
     end
     echo("Nãi chuyÖn thÊt b¹i!")
     echoLine()
+end
+
+function heNPC(nIndex)
+    if npc.GetSeries(i) == 0 then
+        return " hÖ kim "
+    end
+    if npc.GetSeries(i) == 1 then
+        return " hÖ méc "
+    end
+    if npc.GetSeries(i) == 2 then
+        return " hÖ thñy "
+    end
+    if npc.GetSeries(i) == 3 then
+        return " hÖ háa "
+    end
+    if npc.GetSeries(i) == 4 then
+        return " hÖ thæ "
+    end
+    return " kh«ng râ "
+end
+
+function debugNPC(nIndex)
+    local nx, ny = npc.GetMapPos(nIndex)
+    local text = npc.GetName(nIndex) .. heNPC(nIndex) .. ' Range: ' .. getDistance(nx, ny)
+    echo(text)
+    return text
+end
+
+function attackNPC()
+    -- while true do
+    --     echo(player.GetDoingStatus())
+    --     timer.Sleep(300)
+    -- end
+    while true do
+        local nNearNPC = 0
+        local nNearestNPCIndex = 0
+        for i = 0, 255 do
+            if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 and npc.GetKind(i) == 0 then
+                local nx, ny = npc.GetMapPos(i)
+                if getDistance(nx, ny) < 400 then
+                    nNearNPC = nNearNPC + 1
+                    nNearestNPCIndex = i
+                    -- debugNPC(i)
+                end
+            end
+        end
+
+        echo("Sè l­îng NPC: " .. nNearNPC)
+        if nNearNPC > 3 then
+            player.Attack(nNearestNPCIndex)
+        else
+            echoRed("Bá qua")
+        end
+        timer.Sleep(500)
+    end
 end

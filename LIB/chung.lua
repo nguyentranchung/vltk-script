@@ -527,7 +527,7 @@ end
 
 function getDistance(x1, y1)
     local x2, y2 = player.GetMapPos()
-    return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2))
+    return math.floor(math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2)))
 end
 
 function echo(szContent)
