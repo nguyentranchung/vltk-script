@@ -53,3 +53,31 @@ function TimBossXanh()
         timer.Sleep(100)
     end
 end
+
+function TimDoTuNguoiBan()
+    while true do
+        for i = 2, 255 do
+            echo(npc.GetName(i))
+            echo(npc.IsStall(i) == 1)
+            if npc.IsExists(i) and npc.GetKind(i) == 1 and npc.IsStall(i) == 1 and getDistanceNPC(i) <200 then
+                stall.Open(i)
+                while stall.IsVisible() == 0 do
+                    timer.Sleep(50)
+                end
+                
+                if stall.IsVisible() == 1 then
+                    local nEnd = stall.GetCount() - 1
+                    for i = 0, nEnd do
+                        local nItemIndex = stall.GetIndex(i)
+                        echo(item.GetName(nItemIndex))
+                    end
+                end
+
+                break
+            end
+        end
+
+        break
+        -- timer.Sleep(1000)
+    end
+end

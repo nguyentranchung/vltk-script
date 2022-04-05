@@ -6,6 +6,6 @@ function main()
     -- writeObject()
     -- writeHanhTrang()
     -- writeObject()
-    getAllData(map)
-    checkNPC()
+    -- getAllData(stall)
+    LuyenSkill()
 end

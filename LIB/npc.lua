@@ -1,3 +1,9 @@
+-- kind_normal 0 = quai    
+-- kind_player 1 = nguoi choi,
+-- kind_partner 2 = ,
+-- kind_dialoger,
+-- kind_bird,
+-- kind_mouse = 5
 function checkNPC()
     for i = 0, 255 do
         if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
@@ -78,9 +84,13 @@ function heNPC(nIndex)
     return " kh«ng râ "
 end
 
-function debugNPC(nIndex)
+function getDistanceNPC(nIndex)
     local nx, ny = npc.GetMapPos(nIndex)
-    local text = npc.GetName(nIndex) .. heNPC(nIndex) .. ' Range: ' .. getDistance(nx, ny)
+    return getDistance(nx, ny)
+end
+
+function debugNPC(nIndex)
+    local text = npc.GetName(nIndex) .. heNPC(nIndex) .. ' Range: ' .. getDistanceNPC(nIndex)
     echo(text)
     return text
 end
@@ -111,5 +121,55 @@ function attackNPC()
             echoRed("Bá qua")
         end
         timer.Sleep(500)
+    end
+end
+
+function LuyenSkill()
+    while true do
+        control.ResetAll()
+        local attack = false
+        local count = 0
+        for i = 0, 255 do
+            if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 and npc.GetKind(i) == 0 and getDistanceNPC(i) < 300 then
+                -- debugNPC(i)
+                count = count + 1
+            end
+        end
+
+        echoGreen("T×m thÊy " .. count .. " NPC")
+        count = 0
+        local nIndex, nPlace, nX, nY = item.GetFirst()
+        while nIndex ~= 0 do
+            local nGenre, nDetail, nParticular = item.GetKey(nIndex)
+            if nPlace == 3 and nGenre == 1 then
+                count = count + 1
+            end
+            nIndex, nPlace, nX, nY = item.GetNext()
+        end
+
+        -- echoGreen("Cßn " .. count .. " b×nh mana")
+
+        if fasle and count < 1 then
+            echoGreen("Cßn " .. count .. " b×nh mana")
+            control.PauseAll()
+            for i = 0, 255 do
+                if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 and npc.GetKind(i) == 3 then
+                    debugNPC(i)
+                    local nX, nY = npc.GetMapPos(i)
+                    player.MoveTo(nX, nY)
+                    echo(getDistanceNPC(i))
+                    while getDistanceNPC(i) > 90 do
+                        player.MoveTo(nX, nY)
+                        timer.Sleep(100)
+                    end
+                    player.DialogNpc(i)
+                    timer.Sleep(1000)
+                    WaitMenuTimeOut(3)
+                    clickMenu(2)
+                end
+            end
+            control.ResetAll()
+        end
+        timer.Sleep(1000)
     end
 end

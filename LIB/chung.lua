@@ -8,6 +8,8 @@ libNpc = system.GetScriptFolder() .. "\\LIB\\npc.lua"
 IncludeFile(libNpc)
 libHelper = system.GetScriptFolder() .. "\\LIB\\helper.lua"
 IncludeFile(libHelper)
+libMenu = system.GetScriptFolder() .. "\\LIB\\menu.lua"
+IncludeFile(libMenu)
 ------------------------------------------------------------
 
 -- Global Vari ---------------------------------------------
@@ -44,70 +46,6 @@ function useLenhBai(szLenhBai)
     tbVulanLib.UseItemName(szLenhBai) -- mo lenh bai
 end
 
-function clickMenu(nIndex)
-    if hasMenu(gl_MenuSkip) then
-        timer.Sleep(gl_menuClickSpeed)
-        local nType = getMenuType()
-        -- while menu.GetText(nType, nIndex) == preMenuText do
-        --     timer.Sleep(gl_menuClickSpeed)
-        -- end
-        if gl_ShowSelectedMenu or gl_Debug then
-            echo('§· chän: ' .. menu.GetText(nType, nIndex))
-        end
-        menu.ClickIndex(nType, nIndex)
-        -- preMenuText = menu.GetText(nType, nIndex)
-        return true
-    else
-        if gl_Debug then
-            echo("Click Menu gÆp sù cè ngoµi ý muèn! Vui lßng ®îi auto xö lý!")
-        end
-        return false
-    end
-end
-
-function clickMenuNext(nIndex)
-    if hasDialogOrMenu(5) then
-        local nType = getMenuType()
-        clickMenu(nIndex)
-    end
-end
-
-function clickMenuAll(...)
-    for i, v in ipairs(arg) do
-        if clickMenu(v) == false then
-            resetMenuDialog()
-            break
-        end
-    end
-end
-
-function resetMenuDialog()
-    if dialog.IsVisible() then
-        dialog.Close()
-        if dialog.IsVisible() == 1 then
-            system.SendKey(27, 1)
-        end
-    end
-    if menu.IsVisible(1) then
-        menu.Close(1)
-    end
-    if menu.IsVisible(0) then
-        menu.Close(0)
-    end
-end
-
-function getMenuType()
-    if menu.GetText(1, 0) == '' then
-        return 0
-    end
-    return 1
-end
-
-function clickText(szText)
-    echo('§· chän: ' .. szText)
-    menu.ClickText(nType, szText)
-end
-
 function x2_sudothiep()
     if player.GetLevel() > 79 then
         return
@@ -135,7 +73,7 @@ function check_state()
     end
 end
 
-function thieulam()
+function IsThieuLam()
     return (player.GetSeries() == 0 and player.GetStature() == 1)
 end
 
@@ -180,7 +118,6 @@ function box(szContent)
     system.MessageBox(szContent)
 end
 
-
 function Doi10TienDong()
     talkNPC("TiÒn Trang Ba L¨ng")
     clickMenuAll(0, 4, 2)
@@ -205,40 +142,6 @@ function writeMapPath()
     end
     file:close()
     echoRed("Ghi l¹i thµnh c«ng!")
-end
-
-function hasDialogOrMenu(nSecond)
-    gl_FirstTime = os.clock()
-    while menu.IsVisible(0) == 0 and menu.IsVisible(1) == 0 and dialog.IsVisible() == 0 do
-        timer.Sleep(gl_Sleep)
-        if (os.clock() - gl_FirstTime) > nSecond then
-            return false
-        end
-    end
-    return true
-end
-
-function hasMenu(nSecond)
-    gl_FirstTime = os.clock()
-    while menu.IsVisible(0) == 0 and menu.IsVisible(1) == 0 do
-        timer.Sleep(gl_Sleep)
-        if (os.clock() - gl_FirstTime) > nSecond then
-            return false
-        end
-    end
-    timer.Sleep(20)
-    return true
-end
-
-function hasDialog(nSecond)
-    gl_FirstTime = os.clock()
-    while dialog.IsVisible() == 0 do
-        timer.Sleep(gl_Sleep)
-        if (os.clock() - gl_FirstTime) > nSecond then
-            return false
-        end
-    end
-    return true
 end
 
 function testLength()
@@ -657,6 +560,16 @@ function toSlug(str)
     :lower()
 end
 
+function welcome()
+    echoLine()
+    echo("Scripts phiªn b¶n " .. chungVersion .. " || " .. chungVersionDate)
+    echoGreen("Chung NguyÔn Blog: https://chungnguyen.xyz")
+    echo(map.GetID() .. " : " .. map.GetName())
+    echo("Kinh nghiÖm d· tÈu: " .. quest.Datau_Exp())
+    local nX, nY = player.GetMapPos()
+    echo("VÞ trÝ hiÖn t¹i: " .. nX .. " - " .. nY)
+end
+
 tbThuocTinhName = {
     [43] = "Kh«ng thÓ ph¸ hñy",
     [58] = "Bá qua nÐ tr¸nh",
@@ -701,12 +614,4 @@ tbThuocTinhName = {
     [171] = "L«i s¸t néi c«ng",
     [172] = "§éc s¸t néi c«ng,"
 }
-
--- Start
 nFreeHanhTrang = 61
-echoLine()
-echo("Scripts phiªn b¶n " .. chungVersion .. " || " .. chungVersionDate)
-echoGreen("Chung NguyÔn Blog: https://chungnguyen.xyz")
-echo(map.GetID() .. " : "..map.GetName())
-echo("Kinh nghiÖm d· tÈu: "..quest.Datau_Exp())
--- End

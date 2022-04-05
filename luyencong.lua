@@ -4,7 +4,7 @@ IncludeFile(szChungLib)
 function main()
     nFirstTime = os.clock()
     nBatVongSang = nFirstTime
-    if (thieulam()) then
+    if (IsThieuLam()) then
         TangLucTayThieuLam()
     end
     while true do
@@ -21,7 +21,7 @@ function main()
         end
 
         -- bug luc tay thieu lam
-        if (thieulam()) then
+        if (IsThieuLam()) then
             -- TangLucTayThieuLam()
         end
         timer.Sleep(1000)
