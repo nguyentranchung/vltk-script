@@ -7,5 +7,5 @@ function main()
     -- writeHanhTrang()
     -- writeObject()
     -- getAllData(stall)
-    LuyenSkill()
+    TimDoSinhKhi()
 end

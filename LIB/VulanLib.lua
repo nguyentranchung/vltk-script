@@ -124,13 +124,15 @@ tbVulanLib.MoveItem = function(nStartBox,nDestinationBox,szItemName)
 			if bRoomExist == 1 then
 				-- Cam item len tay
 				while item.IsHold()==0 do
+					echo("Hold 0")
 					item.Move(nStartBox,nX,nY,0,0,0)
-					timer.Sleep(10)
+					timer.Sleep(1000)
 				end
 				-- Chuyen den noi thiet lap
 				while item.IsHold()==1 do
+					echo("Hold 1")
 					item.Move(nDestinationBox, nFreeX, nFreeY, nDestinationBox, nFreeX, nFreeY)
-					timer.Sleep(10)
+					timer.Sleep(200)
 				end	
 			end
 		end

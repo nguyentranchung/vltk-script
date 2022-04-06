@@ -13,6 +13,9 @@ end
 function TimDoKhangHoa()
     TimDo(102)
 end
+function TimDoTheLuc()
+    TimDo(93)
+end
 function TimDoSinhKhi()
     TimDo(99)
 end
@@ -33,8 +36,7 @@ function TimDo(findnMagicType)
             for i = 0, 5 do
                 local nMagicType, nValue1, nValue2, nValue3 = item.GetMagicAttrib(nIndex, i)
                 if (findnMagicType == nMagicType) then
-                    echo(szName)
-                    echo('Dßng ' .. (i + 1) .. ': ' .. nValue1)
+                    echo(szName .. ': ' .. nValue1)
                 end
             end
         end
