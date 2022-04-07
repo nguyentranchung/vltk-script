@@ -2,6 +2,8 @@ szVulanLib = system.GetScriptFolder() .. "\\LIB\\VulanLib.lua"
 IncludeFile(szVulanLib)
 local szTHP = system.GetScriptFolder() .. "\\LIB\\THP.lua"
 IncludeFile(szTHP)
+local libVariable = system.GetScriptFolder() .. "\\LIB\\variables.lua"
+IncludeFile(libVariable)
 local libDaTau = system.GetScriptFolder() .. "\\LIB\\datau.lua"
 IncludeFile(libDaTau)
 local libNpc = system.GetScriptFolder() .. "\\LIB\\npc.lua"

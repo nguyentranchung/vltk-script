@@ -13,9 +13,9 @@ function checkNPC()
     end
 end
 
-function showNPC()
+function showNPC(nKind)
     for i = 0, 255 do
-        if npc.GetKind(i) == 0 and npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
+        if npc.GetKind(i) == nKind and npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
             local nx, ny = npc.GetMapPos(i)
             debugNPC(i)
         end
@@ -91,34 +91,37 @@ end
 
 function debugNPC(nIndex)
     local text = npc.GetName(nIndex) .. heNPC(nIndex) .. ' Range: ' .. getDistanceNPC(nIndex)
+
+    local nHeal, nHealMax = npc.GetLife(nIndex)
+
+    if nHeal > 0 then
+        text = text .. ' M¸u: ' .. nHeal
+    end
     echo(text)
     return text
 end
 
-function attackNPC()
-    -- while true do
-    --     echo(player.GetDoingStatus())
-    --     timer.Sleep(300)
-    -- end
+function attackNPC(nDistance)
     while true do
         local nNearNPC = 0
         local nNearestNPCIndex = 0
         for i = 0, 255 do
             if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 and npc.GetKind(i) == 0 then
                 local nx, ny = npc.GetMapPos(i)
-                if getDistance(nx, ny) < 400 then
+                if getDistance(nx, ny) < nDistance then
                     nNearNPC = nNearNPC + 1
                     nNearestNPCIndex = i
                     -- debugNPC(i)
                 end
             end
         end
-
-        echo("Sè l­îng NPC: " .. nNearNPC)
-        if nNearNPC > 3 then
+        -- echo("Sè l­îng NPC: " .. nNearNPC)
+        if nNearNPC > 2 then
             player.Attack(nNearestNPCIndex)
         else
-            echoRed("Bá qua")
+            if player.GetDoingStatus() ~= do_sit then
+                player.SendCommand(do_sit)
+            end
         end
         timer.Sleep(500)
     end

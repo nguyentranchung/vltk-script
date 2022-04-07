@@ -1,4 +1,4 @@
-szChungLib = system.GetScriptFolder() .. "\\LIB\\chung.lua"
+local szChungLib = system.GetScriptFolder() .. "\\LIB\\chung.lua"
 IncludeFile(szChungLib)
 
 function main()
@@ -7,5 +7,5 @@ function main()
     -- writeHanhTrang()
     -- writeObject()
     -- getAllData(stall)
-    TimDoSinhKhi()
+    attackNPC(150)
 end
