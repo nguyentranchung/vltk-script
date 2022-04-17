@@ -34,7 +34,6 @@ function talkNPC(szNPCName)
             player.DialogNpc(i)
             hasDialogOrMenu(4)
             echo("Nãi chuyÖn thµnh c«ng!")
-            echoLine()
             return true
         end
         if npc.GetKind(i) == 3 and blank(szNPCName) then
@@ -66,19 +65,19 @@ function talkNPC(szNPCName)
 end
 
 function heNPC(nIndex)
-    if npc.GetSeries(i) == 0 then
+    if npc.GetSeries(nIndex) == 0 then
         return " hÖ kim "
     end
-    if npc.GetSeries(i) == 1 then
+    if npc.GetSeries(nIndex) == 1 then
         return " hÖ méc "
     end
-    if npc.GetSeries(i) == 2 then
+    if npc.GetSeries(nIndex) == 2 then
         return " hÖ thñy "
     end
-    if npc.GetSeries(i) == 3 then
+    if npc.GetSeries(nIndex) == 3 then
         return " hÖ háa "
     end
-    if npc.GetSeries(i) == 4 then
+    if npc.GetSeries(nIndex) == 4 then
         return " hÖ thæ "
     end
     return " kh«ng râ "
@@ -90,19 +89,24 @@ function getDistanceNPC(nIndex)
 end
 
 function debugNPC(nIndex)
-    local text = npc.GetName(nIndex) .. heNPC(nIndex) .. ' Range: ' .. getDistanceNPC(nIndex)
+    local text = nIndex .. ': ' .. npc.GetName(nIndex) .. heNPC(nIndex) .. ' Range: ' .. getDistanceNPC(nIndex)
 
     local nHeal, nHealMax = npc.GetLife(nIndex)
 
     if nHeal > 0 then
-        text = text .. ' M¸u: ' .. nHeal
+        text = text .. ' M¸u: ' .. math.floor(nHeal / 1000) .. 'K'
     end
     echo(text)
     return text
 end
 
-function attackNPC(nDistance)
+function attackNPC(nDistance, nNumber)
+    local nDistance = nDistance or 150
+    local nNumber = nNumber or 2
     while true do
+        if player.IsFightMode() == 0 then
+            timer.Sleep(500)
+        end
         local nNearNPC = 0
         local nNearestNPCIndex = 0
         for i = 0, 255 do
@@ -111,19 +115,23 @@ function attackNPC(nDistance)
                 if getDistance(nx, ny) < nDistance then
                     nNearNPC = nNearNPC + 1
                     nNearestNPCIndex = i
-                    -- debugNPC(i)
+                    debugNPC(i)
+                    if nNearNPC > nNumber then
+                        echo("TÊn c«ng: " .. nNearestNPCIndex)
+                        player.SetAttackRadius(200)
+                        player.Attack(i)
+                        break
+                    else
+                        if player.GetDoingStatus() ~= do_sit then
+                            player.SendCommand(do_sit)
+                        end
+                    end
                 end
             end
         end
         -- echo("Sè l­îng NPC: " .. nNearNPC)
-        if nNearNPC > 2 then
-            player.Attack(nNearestNPCIndex)
-        else
-            if player.GetDoingStatus() ~= do_sit then
-                player.SendCommand(do_sit)
-            end
-        end
-        timer.Sleep(500)
+
+        timer.Sleep(1000)
     end
 end
 

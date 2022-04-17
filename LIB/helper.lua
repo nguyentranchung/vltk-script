@@ -21,6 +21,16 @@ function writeThuocTinh()
     file:close(file)
 end
 
+function writeMenu()
+    local nType = getMenuType()
+    local file = io.open(gl_ScriptFolder .. "\\logs\\menu.txt", "a+")
+    for i = 0, menu.GetCount(nType) do
+        echo(menu.GetText(nType, i))
+        file:write(menu.GetText(nType, i) .. '\n')
+    end
+    file:close(file)
+end
+
 function writeHanhTrang()
     echoRed('Ghi tªn c¸c vËt phÈm trong hµnh trang')
     local nIndex, nPlace, nX, nY = item.GetFirst()
@@ -32,6 +42,21 @@ function writeHanhTrang()
         nIndex, nPlace, nX, nY = item.GetNext()
     end
     file:close(file)
+end
+
+function countHanhTrang(szItemName)
+    local nIndex, nPlace, nX, nY = item.GetFirst()
+    local count = 0
+    while nIndex ~= 0 do
+        if item.GetName(nIndex) == szItemName then
+            local nStackCount = item.GetStackCount(nIndex)
+            count = count + nStackCount
+        end
+        nIndex, nPlace, nX, nY = item.GetNext()
+    end
+
+    echo(szItemName .. ': ' .. count)
+    return count
 end
 
 function writeObject()
@@ -49,12 +74,12 @@ function writeObject()
     file:close(file)
 end
 
-function writeNPC()
+function writeNPC(kindNPC)
     local file = io.open(gl_ScriptFolder .. "\\logs\\npc", "w")
+    local kindNPC = kindNPC or 0
     for i = 0, 255 do
-        if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
+        if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 and npc.GetKind(i) == kindNPC then
             local nx, ny = npc.GetMapPos(i)
-            -- file:write("npc_" .. toSlug(npc.GetName(i)) .. " = \"" .. npc.GetName(i) .. "\"", "\n")
             debugNPC(i)
             file:write("\"" .. npc.GetName(i) .. "\"", "\n")
         end

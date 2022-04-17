@@ -1,32 +1,35 @@
 function TimDoKhangHoa()
-    TimDo(102)
+    TimDoByMagic(102)
 end
 function TimDoKhangBang()
-    TimDo(105)
+    TimDoByMagic(105)
 end
 function TimDoSucManh()
-    TimDo(97)
+    TimDoByMagic(97)
 end
 function TimDoThanPhap()
-    TimDo(98)
+    TimDoByMagic(98)
 end
 function TimDoKhangHoa()
-    TimDo(102)
+    TimDoByMagic(102)
 end
 function TimDoTheLuc()
-    TimDo(93)
+    TimDoByMagic(93)
 end
 function TimDoSinhKhi()
-    TimDo(99)
+    TimDoByMagic(99)
 end
-function TimDoTGLC()
-    TimDo(106)
+function TimDoThoiGianLamCham()
+    TimDoByMagic(106)
+end
+function TimDoThoiGianLamChoang()
+    TimDoByMagic(110)
 end
 function TimDoTGTD()
-    TimDo(108)
+    TimDoByMagic(108)
 end
 
-function TimDo(findnMagicType)
+function TimDoByMagic(findnMagicType)
     echoRed('T×m ®å b¾t ®Çu')
     local nIndex, nPlace, nX, nY = item.GetFirst()
     while nIndex ~= 0 do
@@ -36,9 +39,23 @@ function TimDo(findnMagicType)
             for i = 0, 5 do
                 local nMagicType, nValue1, nValue2, nValue3 = item.GetMagicAttrib(nIndex, i)
                 if (findnMagicType == nMagicType) then
-                    echo(szName .. ': ' .. nValue1)
+                    echo(szName .. heNPC(item.GetSeries(nIndex)) .. ': ' .. nValue1)
                 end
             end
+        end
+        nIndex, nPlace, nX, nY = item.GetNext()
+    end
+    echoRed('T×m ®å kÕt thóc')
+end
+
+function TimDoByLevel(nLevel)
+    echoRed('T×m ®å b¾t ®Çu')
+    local nIndex, nPlace, nX, nY = item.GetFirst()
+    while nIndex ~= 0 do
+        local nGenre, nDetail, nParticular = item.GetKey(nIndex)
+        local szName = item.GetName(nIndex)
+        if nGenre == 0 and item.GetLevel(nIndex) == nLevel and item.GetPrice(nIndex) > 0 then
+            echo(szName .. NguHanh(item.GetSeries(nIndex)))
         end
         nIndex, nPlace, nX, nY = item.GetNext()
     end
@@ -61,12 +78,12 @@ function TimDoTuNguoiBan()
         for i = 2, 255 do
             echo(npc.GetName(i))
             echo(npc.IsStall(i) == 1)
-            if npc.IsExists(i) and npc.GetKind(i) == 1 and npc.IsStall(i) == 1 and getDistanceNPC(i) <200 then
+            if npc.IsExists(i) and npc.GetKind(i) == 1 and npc.IsStall(i) == 1 and getDistanceNPC(i) < 200 then
                 stall.Open(i)
                 while stall.IsVisible() == 0 do
                     timer.Sleep(50)
                 end
-                
+
                 if stall.IsVisible() == 1 then
                     local nEnd = stall.GetCount() - 1
                     for i = 0, nEnd do

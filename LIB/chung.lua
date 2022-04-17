@@ -2,8 +2,6 @@ szVulanLib = system.GetScriptFolder() .. "\\LIB\\VulanLib.lua"
 IncludeFile(szVulanLib)
 local szTHP = system.GetScriptFolder() .. "\\LIB\\THP.lua"
 IncludeFile(szTHP)
-local libVariable = system.GetScriptFolder() .. "\\LIB\\variables.lua"
-IncludeFile(libVariable)
 local libDaTau = system.GetScriptFolder() .. "\\LIB\\datau.lua"
 IncludeFile(libDaTau)
 local libNpc = system.GetScriptFolder() .. "\\LIB\\npc.lua"
@@ -23,7 +21,6 @@ gl_FirstTime = gl_Time
 gl_ScriptFolder = system.GetScriptFolder()
 gl_SoDongVip = 4
 gl_MenuSkip = 3
-gl_EnterWait = 30
 gl_ShowSelectedMenu = false
 gl_QuangCao = true
 gl_QuangCaoCount = 0
@@ -38,6 +35,57 @@ gl_filterCount = 0
 preMenuText = ""
 gl_Debug = true
 tbSetDo = {}
+do_none = 0
+do_stand =  1  --
+do_walk =  2  --
+do_run =  3  --chay
+do_jump =  4  --
+do_skill =  5  --
+do_magic =  6  --xai chieu
+do_attack =  7  --tan cong
+do_sit =  8  --ngoi
+do_hurt = 9
+do_death = 10
+do_defense = 11
+do_idle = 12
+do_specialskill = 13
+do_special1 = 14
+do_special2 = 15
+do_special3 = 16
+do_special4 = 17
+do_runattack = 18
+do_manyattack = 19
+do_jumpattack = 20
+do_revive = 21
+pos_hand = 1 -- tren tay
+pos_equip = 2 -- trang bi
+pos_equiproom = 3 -- hanh trang
+pos_repositoryroom = 4 -- kho chua do
+pos_traderoom = 5
+pos_trade1 = 6
+pos_immediacy = 7
+pos_giveitem = 12
+kind_normal = 0    
+kind_player = 1
+kind_partner = 2
+kind_dialoger = 3
+kind_bird = 4
+kind_mouse = 5
+CH_NEARBY = "CH_NEARBY"
+CH_TEAM = "CH_TEAM"
+CH_WORLD = "CH_WORLD"
+CH_FACTION = "CH_FACTION"
+CH_SYSTEM = "CH_SYSTEM"
+CH_CITY = "CH_CITY"
+CH_TONG = "CH_TONG"
+CH_TONGUNION = "CH_TONGUNION"
+CH_CHATROOM = "CH_CHATROOM"
+CH_ATTACK = "CH_ATTACK"
+CH_DEFEND = "CH_DEFEND"
+CH_JABBER = "CH_JABBER"
+CH_SONG = "CH_SONG"
+CH_JIN = "CH_JIN"
+CH_CUSTOM = "CH_CUSTOM"
 -- End -----------------------------------------------------
 function useTHP()
     tbVulanLib.UseItemName("Th«n Hµnh PhÔ")
@@ -94,12 +142,6 @@ function bat_heal()
     clickMenu(0)
 end
 
-function checkVar(var)
-    for k, v in pairs(var) do
-        echo(k)
-    end
-end
-
 function getFreeHanhTrang(showEcho)
     local free = 60
     local nItemIndex, nPlace, nX, nY, nWidth, nHeight
@@ -114,10 +156,6 @@ function getFreeHanhTrang(showEcho)
         echo('Hµnh trang cﬂn trËng: ' .. free .. ' chÁ')
     end
     return free
-end
-
-function box(szContent)
-    system.MessageBox(szContent)
 end
 
 function Doi10TienDong()
@@ -174,7 +212,6 @@ function LocDo()
     while nFreeHanhTrang == getFreeHanhTrang(false) do
         timer.Sleep(500)
         if (os.clock() - gl_FirstTime) > 1 then
-            -- gl_EnterWait = 500
             if gl_Debug then
                 echoRed("CÀp nhÀt hµnh trang th t bπi")
             end
@@ -266,16 +303,20 @@ function GuiDo(nIndex, nXLocDo, nYLocDo)
     end
 end
 
-function enter()
-    if gl_Debug then
-        echo("Enter Sleep: " .. gl_EnterWait)
-    end
-    timer.Sleep(gl_EnterWait)
+function enter(nWait)
+    local nWait = nWait or 30
+    timer.Sleep(nWait)
     system.SendKey(13, 1)
-    -- gl_EnterWait = 30
+end
+
+function backspace(nWait)
+    local nWait = nWait or 30
+    timer.Sleep(nWait)
+    system.SendKey(8, 1)
 end
 
 function nhapso(nSo)
+    echo("NhÀp sË " .. nSo)
     local nLength
     gl_FirstTime = os.clock()
     while dialog.IsVisible() == 0 do
@@ -295,12 +336,39 @@ function nhapso(nSo)
     enter()
 end
 
+function ternary(condition, valueWhenTrue, valueWhenFalse)
+    if condition then
+        return valueWhenTrue
+    else
+        return valueWhenFalse
+    end
+end
+
+function RaoVat(szContent)
+    local szContent = szContent or ""
+    while true do
+        tbVulanLib.Chat("CH_WORLD", szContent)
+        timer.Sleep(1000)
+        tbVulanLib.Chat("CH_CITY", szContent)
+        timer.Sleep(10000)
+    end
+end
+
+function NguHanh(nIndex)
+    local t = {" h÷ kim ", " h÷ mÈc ", " h÷ thÒy ", " h÷ h·a ", " h÷ thÊ "}
+    return t[nIndex + 1]
+end
+
 function tablelength(T)
     local count = 0
     for _ in pairs(T) do
         count = count + 1
     end
     return count
+end
+
+function SellItemByName(szItemName)
+    
 end
 
 function ShopItem(nIndex)
@@ -326,19 +394,6 @@ function ShopItem(nIndex)
     if gl_InternetDelay < 150 then
         gl_InternetDelay = 150
     end
-end
-
-function writeMenu()
-    local nType = 1
-    if menu.IsVisible(1) == 0 then
-        nType = 0
-    end
-    local file = io.open(gl_ScriptFolder .. "\\menu.txt", "w")
-    for i = 0, menu.GetCount(nType) do
-        echo(menu.GetText(nType, i))
-        file:write(toSlug(menu.GetText(nType, i)) .. '\n')
-    end
-    file:close(file)
 end
 
 function getAllData(t, prevData)

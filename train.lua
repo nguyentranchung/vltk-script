@@ -2,10 +2,11 @@ local szChungLib = system.GetScriptFolder() .. "\\LIB\\chung.lua"
 IncludeFile(szChungLib)
 
 function main()
-    -- writeNPC()
+    -- writeNPC(kind_dialoger)
     -- writeObject()
     -- writeHanhTrang()
     -- writeObject()
     -- getAllData(stall)
-    attackNPC(150)
+    TimDoByLevel(7)
+    ShopItem()
 end
