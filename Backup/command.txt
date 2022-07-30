@@ -1,0 +1,5 @@
+/AddCommand f PK1 Switch([[pk]],2)
+/AddCommand g PK1 Switch([[pk]],1)
+/AddCommand h PK0 Switch([[pk]],0)
+
+/AddCommand e ? Switch([[sit]])

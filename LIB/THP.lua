@@ -1,3 +1,16 @@
+function SaMac1()
+    useTHP()
+    clickMenuAll(1, 5, 7, 4)
+end
+function BAITRAIN()
+    echo("DI DEN BAI TRAIN")
+    useTHP()
+    clickMenuAll(1, 0, 3, 1)
+end
+function SaMac2()
+useTHP()
+clickMenuAll(1, 5, 7, 5)
+end
 
 function TuongDuongTrungTam()
     useTHP()

@@ -4,15 +4,13 @@ local szTHP = system.GetScriptFolder() .. "\\LIB\\THP.lua"
 IncludeFile(szTHP)
 local libDaTau = system.GetScriptFolder() .. "\\LIB\\datau.lua"
 IncludeFile(libDaTau)
-local libNpc = system.GetScriptFolder() .. "\\LIB\\npc.lua"
-IncludeFile(libNpc)
 local libHelper = system.GetScriptFolder() .. "\\LIB\\helper.lua"
 IncludeFile(libHelper)
 local libMenu = system.GetScriptFolder() .. "\\LIB\\menu.lua"
 IncludeFile(libMenu)
 ------------------------------------------------------------
 
--- Global Vari ---------------------------------------------
+-- Global Variables --
 chungVersion = "2.2"
 chungVersionDate = "01/10/2018"
 gl_Time = os.clock()
@@ -36,14 +34,14 @@ preMenuText = ""
 gl_Debug = true
 tbSetDo = {}
 do_none = 0
-do_stand =  1  --
-do_walk =  2  --
-do_run =  3  --chay
-do_jump =  4  --
-do_skill =  5  --
-do_magic =  6  --xai chieu
-do_attack =  7  --tan cong
-do_sit =  8  --ngoi
+do_stand = 1 --
+do_walk = 2 --
+do_run = 3 -- chay
+do_jump = 4 --
+do_skill = 5 --
+do_magic = 6 -- xai chieu
+do_attack = 7 -- tan cong
+do_sit = 8 -- ngoi
 do_hurt = 9
 do_death = 10
 do_defense = 11
@@ -65,12 +63,17 @@ pos_traderoom = 5
 pos_trade1 = 6
 pos_immediacy = 7
 pos_giveitem = 12
-kind_normal = 0    
+kind_normal = 0
 kind_player = 1
 kind_partner = 2
 kind_dialoger = 3
 kind_bird = 4
 kind_mouse = 5
+he_kim = 0
+he_moc = 1
+he_thuy = 2
+he_hoa = 3
+he_tho = 4
 CH_NEARBY = "CH_NEARBY"
 CH_TEAM = "CH_TEAM"
 CH_WORLD = "CH_WORLD"
@@ -86,7 +89,8 @@ CH_JABBER = "CH_JABBER"
 CH_SONG = "CH_SONG"
 CH_JIN = "CH_JIN"
 CH_CUSTOM = "CH_CUSTOM"
--- End -----------------------------------------------------
+-- End ----------------
+
 function useTHP()
     tbVulanLib.UseItemName("ThÇn Hµnh Phï")
 end
@@ -158,9 +162,12 @@ function getFreeHanhTrang(showEcho)
     return free
 end
 
-function Doi10TienDong()
-    talkNPC("TiÒn Trang Ba L¨ng")
-    clickMenuAll(0, 4, 2)
+function DoiTienDong(nTime)
+    local nTime1 = nTime or 1
+    for i = 1, nTime1, 1 do
+        talkNPC("TiÒn Trang Ba L¨ng")
+        clickMenuAll(0, 4, 3)
+    end
 end
 
 function writeMapPath()
@@ -261,6 +268,7 @@ function LocDo()
     if nVip > 0 then
         echo('Trong hµnh trang cã ' .. nVip .. ' ®å vÝp')
         tbVulanLib.Chat("CH_NEARBY", "<color=green>Trong hµnh trang cã " .. nVip .. " mãn vÝp :0!")
+        return
     end
     if nVip > 0 and os.time() - gl_Time > 20 then
         echoRed(line())
@@ -269,7 +277,7 @@ function LocDo()
         echoDonate()
         gl_Time = os.time()
     end
-    echoQuangCao()
+    -- echoQuangCao()
     nFreeHanhTrang = getFreeHanhTrang(false)
 end
 
@@ -336,6 +344,19 @@ function nhapso(nSo)
     enter()
 end
 
+function DinhGia(nPrice)
+    local nIndex, nPlace, nX, nY = item.GetFirst()
+    local nPrice = nPrice or 50000
+    while nIndex ~= 0 do
+        local nGenre, nDetail, nParticular = item.GetKey(nIndex)
+        if nPlace == pos_equiproom then
+            item.SetPrice(nIndex, nPrice)
+            echo(item.GetName(nIndex))
+        end
+        nIndex, nPlace, nX, nY = item.GetNext()
+    end
+end
+
 function ternary(condition, valueWhenTrue, valueWhenFalse)
     if condition then
         return valueWhenTrue
@@ -348,8 +369,8 @@ function RaoVat(szContent)
     local szContent = szContent or ""
     while true do
         tbVulanLib.Chat("CH_WORLD", szContent)
-        timer.Sleep(1000)
-        tbVulanLib.Chat("CH_CITY", szContent)
+        -- tbVulanLib.Chat(CH_CITY, szContent)
+        -- tbVulanLib.Chat(CH_CITY, szContent)
         timer.Sleep(10000)
     end
 end
@@ -368,7 +389,7 @@ function tablelength(T)
 end
 
 function SellItemByName(szItemName)
-    
+
 end
 
 function ShopItem(nIndex)
@@ -444,6 +465,40 @@ function echoColor(szContent, szColor)
     echo(szContent)
 end
 
+function color(szColor)
+    return "<color=" .. szColor .. ">"
+end
+
+function colorGreen()
+    return color("green")
+end
+
+function colorRed()
+    return color("red")
+end
+
+function colorYellow()
+    return color("yellow")
+end
+
+function colorBySeries()
+    if player.GetSeries() == 0 then
+        return colorYellow()
+    end
+    if player.GetSeries() == 1 then
+        return colorGreen()
+    end
+    if player.GetSeries() == 2 then
+        return "<bclr=blue>"
+    end
+    if player.GetSeries() == 3 then
+        return "<bclr=red>"
+    end
+    if player.GetSeries() == 4 then
+        return "<bclr=pink>"
+    end
+end
+
 function echoGreen(szContent)
     echoColor(szContent, "green")
 end
@@ -451,6 +506,189 @@ end
 function echoRed(szContent)
     echoColor(szContent, "red")
 end
+
+-- NPC --
+function checkNPC()
+    for i = 0, 255 do
+        if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
+            local nx, ny = npc.GetMapPos(i)
+            echo(npc.GetName(i) .. ' kind: ' .. npc.GetKind(i) .. " length: " .. string.len(npc.GetName(i)))
+        end
+    end
+end
+
+function showNPC(nKind)
+    for i = 0, 255 do
+        if npc.GetKind(i) == nKind and npc.IsExists(i) and string.len(npc.GetName(i)) > 0 then
+            local nx, ny = npc.GetMapPos(i)
+            debugNPC(i)
+        end
+    end
+end
+
+function talkNPC(szNPCName)
+    local minLength = 999999
+    local indexNPC = 2
+
+    for i = 2, 255 do
+        local nx, ny = npc.GetMapPos(i)
+        if npc.GetKind(i) == 3 and filled(szNPCName) and npc.GetName(i) == szNPCName then
+            echo("T×m thÊy " .. szNPCName .. " sÏ nãi chuyÖn trong chèc l¸t")
+            echo(nx .. "/" .. ny)
+            player.DialogNpc(i)
+            hasDialogOrMenu(4)
+            echo("Nãi chuyÖn thµnh c«ng!")
+            return true
+        end
+        if npc.GetKind(i) == 3 and blank(szNPCName) then
+            if getDistance(nx, ny) < minLength then
+                indexNPC = i
+                minLength = getDistance(nx, ny)
+            end
+        end
+    end
+
+    if blank(szNPCName) then
+        if gl_Debug then
+            echo(minLength)
+        end
+        if minLength > 1100 then
+            echo("Kh«ng nhËp vµo tªn npc, nãi chuyÖn víi ng­êi gÇn nhÊt: " .. npc.GetName(indexNPC))
+            player.DialogNpc(indexNPC)
+            hasDialogOrMenu(4)
+            echo("Nãi chuyÖn thµnh c«ng!")
+            echoLine()
+            return true
+        else
+            echoRed("NPC gÇn nhÊt ®øng c¸ch qu¸ xa")
+            return false
+        end
+    end
+    echo("Nãi chuyÖn thÊt b¹i!")
+    echoLine()
+end
+
+function heNPC(nIndex)
+    if npc.GetSeries(nIndex) == 0 then
+        return " hÖ kim "
+    end
+    if npc.GetSeries(nIndex) == 1 then
+        return " hÖ méc "
+    end
+    if npc.GetSeries(nIndex) == 2 then
+        return " hÖ thñy "
+    end
+    if npc.GetSeries(nIndex) == 3 then
+        return " hÖ háa "
+    end
+    if npc.GetSeries(nIndex) == 4 then
+        return " hÖ thæ "
+    end
+    return " kh«ng râ "
+end
+
+function getDistanceNPC(nIndex)
+    local nx, ny = npc.GetMapPos(nIndex)
+    return getDistance(nx, ny)
+end
+
+function debugNPC(nIndex)
+    local text = nIndex .. ': ' .. npc.GetName(nIndex) .. heNPC(nIndex) .. ' Range: ' .. getDistanceNPC(nIndex)
+
+    local nHeal, nHealMax = npc.GetLife(nIndex)
+
+    if nHeal > 0 then
+        text = text .. ' M¸u: ' .. math.floor(nHeal / 1000) .. 'K'
+    end
+    echo(text)
+    return text
+end
+
+function attackNPC(nDistance, nNumber)
+    local nDistance = nDistance or 150
+    local nNumber = nNumber or 2
+    while true do
+        if player.IsFightMode() == 0 then
+            timer.Sleep(500)
+        end
+        local nNearNPC = 0
+        local nNearestNPCIndex = 0
+        for i = 0, 255 do
+            if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 and npc.GetKind(i) == 0 then
+                local nx, ny = npc.GetMapPos(i)
+                if getDistance(nx, ny) < nDistance then
+                    nNearNPC = nNearNPC + 1
+                    nNearestNPCIndex = i
+                    debugNPC(i)
+                    if nNearNPC > nNumber then
+                        echo("TÊn c«ng: " .. nNearestNPCIndex)
+                        player.SetAttackRadius(200)
+                        player.Attack(i)
+                        break
+                    else
+                        if player.GetDoingStatus() ~= do_sit then
+                            player.SendCommand(do_sit)
+                        end
+                    end
+                end
+            end
+        end
+        -- echo("Sè l­îng NPC: " .. nNearNPC)
+
+        timer.Sleep(1000)
+    end
+end
+
+function LuyenSkill()
+    while true do
+        control.ResetAll()
+        local attack = false
+        local count = 0
+        for i = 0, 255 do
+            if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 and npc.GetKind(i) == 0 and getDistanceNPC(i) < 300 then
+                -- debugNPC(i)
+                count = count + 1
+            end
+        end
+
+        echoGreen("T×m thÊy " .. count .. " NPC")
+        count = 0
+        local nIndex, nPlace, nX, nY = item.GetFirst()
+        while nIndex ~= 0 do
+            local nGenre, nDetail, nParticular = item.GetKey(nIndex)
+            if nPlace == 3 and nGenre == 1 then
+                count = count + 1
+            end
+            nIndex, nPlace, nX, nY = item.GetNext()
+        end
+
+        -- echoGreen("Cßn " .. count .. " b×nh mana")
+
+        if fasle and count < 1 then
+            echoGreen("Cßn " .. count .. " b×nh mana")
+            control.PauseAll()
+            for i = 0, 255 do
+                if npc.IsExists(i) and string.len(npc.GetName(i)) > 0 and npc.GetKind(i) == 3 then
+                    debugNPC(i)
+                    local nX, nY = npc.GetMapPos(i)
+                    player.MoveTo(nX, nY)
+                    echo(getDistanceNPC(i))
+                    while getDistanceNPC(i) > 90 do
+                        player.MoveTo(nX, nY)
+                        timer.Sleep(100)
+                    end
+                    player.DialogNpc(i)
+                    timer.Sleep(1000)
+                    WaitMenuTimeOut(3)
+                    clickMenu(2)
+                end
+            end
+            control.ResetAll()
+        end
+        timer.Sleep(1000)
+    end
+end
+-- NPC --
 
 function line()
     return "==================================="
